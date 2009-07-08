@@ -31,7 +31,7 @@ session_start();
 /*
 * Include our example functions. Your actual functions may differ.
 */
-require_once 'functions.php';
+require 'functions.php';
 
 /*
 * Is $_SESSION['loggedin'] set and does it evaluate to TRUE?
@@ -51,7 +51,7 @@ if(isset($_POST['process'])){
 	/*
 	* Include the Dope OpenID class file.
 	*/
-	require_once 'class.dopeopenid.php';
+	require 'class.dopeopenid.php';
 	
 	/*
 	* URL input is expected here.
@@ -235,13 +235,15 @@ if(isset($_GET['action']) && $_GET['action']=="verify" && $_GET['openid_mode'] !
 			// to log in to your site. Store useful information from their
 			// OpenID Provider so you can populate the necessary fields on
 			// your registration page. Redirect the user there.
+			$userinfo = $openid->filterUserInfo($_GET);
+			
 			echo "<p>Your OpenID Identity (".$_GET['openid_identity'].") wasn't found in our records.</p>";
 			echo "<p>Good news though: We just need your email and a friendly name and you'll have full access to all the site's features.</p>";
 			echo "<p>DEBUG: The following information came back from your OpenID provider:</p>";
 			echo "<ul>";
-			echo "\t<li><b>Nickname</b>: " . $_GET['openid_sreg_nickname'] . "</li>";
-			echo "\t<li><b>Language</b>: " . $_GET['openid_sreg_language'] . "</li>";
-			echo "\t<li><b>Email</b>: " . $_GET['openid_sreg_email'] . "</li>";
+			echo "\t<li><b>Nickname</b>: " . $userinfo['nickname'] . "</li>";
+			echo "\t<li><b>Language</b>: " . $userinfo['language'] . "</li>";
+			echo "\t<li><b>Email</b>: " . $userinfo['email'] . "</li>";
 			echo "</ul>";
 			
 			exit;
