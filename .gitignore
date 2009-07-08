@@ -1,0 +1,8 @@
+# Backup files
+*~
+*.bak
+*.php.*
+
+# Various
+*/.DS_Store
+.DS_Store
