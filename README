@@ -1,0 +1,147 @@
+/**
+*	This file is part of Dope OpenID.
+*   Author: Steve Love (http://www.stevelove.org)
+*   
+*   Some code has been modified from Simple OpenID:
+*   http://www.phpclasses.org/browse/package/3290.html
+*
+*   Yadis Library provided by JanRain:
+*   http://www.openidenabled.com/php-openid/
+*
+*	Dope OpenID is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
+*
+*	Dope OpenID is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+*	GNU General Public License for more details.
+*
+*	You should have received a copy of the GNU General Public License
+*	along with Dope OpenID. If not, see <http://www.gnu.org/licenses/>.
+**/
+
+
+I. How to Install Dope OpenID
+
+Because installation may vary with your implementation, it will be best to 
+explain how to install the working demo. From there you are free to modify
+your implementation in any way you choose.
+
+First unzip the easyopenid-1.0.zip archive. 
+You'll need to make changes to some of the files:
+		
+	A. login.php	
+		
+		1. RETURN URL
+		login.php: line 89
+		
+		Set your return URL. This is the URL that OpenID Providers (OP) will use
+		to send their users back to your site. In practice, it should point to 
+		either a separate script to verify the information or just contain a flag
+		that triggers such a script within one file. For the demo, we'll flag it
+		in the query string. For example:
+		
+			http://example.com/openid/login.php?action=verify
+		
+		2. TRUST ROOT
+		login.php: line 97
+		
+		Set your trust root. This is the URL or set of URLs users are asked to 
+		trust when signing in with their OP. For example:
+		
+			http://example.com/openid/
+			
+		3. OPTIONAL USER DETAILS (OPTIONAL)
+		login.php: line 109
+		
+		If you want to attempt to retrieve Simple Registration or Attribute Exchange
+		information, uncomment this line and list the attributes you're requesting.
+			
+		4. REQUIRED USER DETAILS (OPTIONAL)
+		login.php: line 118
+		
+		Same as above, except with this line you're telling the OP that you MUST
+		have this information. The OP or the user are free to decline, at which 
+		point the OpenID login should therefore fail. Uncomment to use.
+		
+		5. PAPE POLICIES (OPTIONAL)
+		login.php: line 127
+		
+		PAPE policies attempt to provide a little more protection against phishing
+		and other attacks. Not all OPs support them, so requesting their use may
+		be ignored. Uncomment to use. More info and possible policy values here: 
+		http://openid.net/specs/openid-provider-authentication-policy-extension-1_0-01.html
+		
+		6. PAPE MAX AUTH AGE (OPTIONAL)
+		login.php: line 136
+		
+		Also part of the PAPE extension, you can set a time limit for users to
+		authenticate themselves with their OpenID Provider. If it takes too long,
+		authentication will fail and the user will not be allowed access to your site.
+		Uncomment and set a value in seconds to use.
+		
+	B. index.php
+	
+		1. XRDF
+		index.php: line 25
+		
+		The included yadis.xrdf file must be discoverable on your site to prevent 
+		"unverified site" warnings from OPs like Yahoo. It must be located in the
+		root of the "trust root" that you set in Section A, 2. TRUST ROOT. For 
+		example:
+		
+		header('X-XRDS-Location:http://example.com/openid/yadis.xrdf');
+		
+	C. yadis.xrdf
+		
+		1. RETURN URL
+		yadis.xrdf: line 9
+		
+		As you can probably tell, this is just an XML file. The <URI> tag must point 
+		to the return URL that you set in Section A, 1. RETURN URL. According to 
+		a few others, this works best when you include port 80 in the URL. For 
+		example:
+			
+			http://example.com:80/openid/login.php?action=verify
+			
+II. How to Use Dope OpenID
+
+	A. Upload the files.
+	
+	After you've made the necessary changes to the files listed in Section I, upload 
+	all files to a directory on your server. For example:
+
+		http://example.com/openid/Services/
+		http://example.com/openid/login.php
+		http://example.com/openid/index.php
+	
+		... and so on.
+	
+	B. Navigate to the site.
+	
+	After uploading, point your browser to the index.php. Follow the instructions 
+	from there. For example:
+	
+		http://example.com/openid/index.php
+		
+III. Special Notes
+
+	A. The fancy OpenID selector on the login page is provided by: 
+	http://idselector.com. You can get your own script and paste in the marked HTML 
+	section of login.php.
+	
+	B. Dope OpenID *attempts* to use both Simple Registration (SREG) and Attribute 
+	Exchange (AX) protocols. Your luck with AX may vary. Some considerations 
+	with AX:
+	
+		1. MyOpenID.com and AX. At this time, myopenid.com uses non-standard AX 
+		schema URLs. If they change this in the future, it could temporarily 
+		break AX support on myopenid.com until Dope OpenID can update.
+		
+		2. Google and AX. You should note that Google will only provide a user's 
+		AX details once to a relying party (unless the user changes those details 
+		at some point in the future). This is because Google expects a relying 
+		party to store the information at the first request (and rightly so).
+	
