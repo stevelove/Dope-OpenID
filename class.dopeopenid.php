@@ -280,7 +280,7 @@ class Dope_OpenID
 	* Method to filter through $_GET array for requested user info.
 	* TODO: Add documentation.
 	*/
-	private function filterUserInfo($arr_get)
+	public function filterUserInfo($arr_get)
 	{
 		foreach($arr_get as $key => $value){
 			$trimmed_key = substr($key,strrpos($key,"_")+1);

@@ -113,7 +113,7 @@ if(isset($_POST['process'])){
 		* defined attributes may not be available. To see where these two types of
 		*  attributes intersect, see the following: http://www.axschema.org/types/
 		*/
-		//$openid->setOptionalInfo(array('dob','nickname','country','language','email'));
+		$openid->setOptionalInfo(array('dob','nickname','country','language','email'));
 		
 		/*
 		* EDIT THIS LINE (OPTIONAL)
