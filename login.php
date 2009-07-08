@@ -86,7 +86,6 @@ if(isset($_POST['process'])){
 		* Create a new Dope_OpenID object
 		*/
 		$openid = new Dope_OpenID($openid_url);
-	
 		/*
 		* YOU MUST EDIT THIS LINE.
 		* The user's OpenID provider will return them to the URL that you provide here.

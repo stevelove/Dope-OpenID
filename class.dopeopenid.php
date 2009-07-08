@@ -352,7 +352,7 @@ class Dope_OpenID
 		
 		$curl = curl_init($url . ($method == "GET" && $params != "" ? "?" . $params : ""));
 		
-		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
+		//curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
 		curl_setopt($curl, CURLOPT_HEADER, FALSE);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
 		curl_setopt($curl, CURLOPT_HTTPGET, ($method == "GET"));
