@@ -35,6 +35,8 @@ require_once 'Services/Yadis/Yadis.php';
 class Dope_OpenID
 {
 	public $fields = array('required' => array(),'optional' => array());
+
+	public $arr_userinfo = array();
 	
 	// An associative array of AX schema definitions
 	private $arr_ax_types = array(
@@ -272,6 +274,24 @@ class Dope_OpenID
 		}else{
 			return FALSE;
 		}
+	}
+	
+	/*
+	* Method to filter through $_GET array for requested user info.
+	* TODO: Add documentation.
+	*/
+	private function filterUserInfo($arr_get)
+	{
+		foreach($arr_get as $key => $value){
+			$trimmed_key = substr($key,strrpos($key,"_")+1);
+			if(stristr($key, 'openid_ext1_value') && isset($value[1])) {
+				$this->arr_userinfo[$trimmed_key] = $value;
+			}
+			if(stristr($key, 'sreg_') && array_key_exists($trimmed_key, $this->arr_ax_types)) {
+				$this->arr_userinfo[$trimmed_key] = $value;
+			}
+		}
+		return $this->arr_userinfo;
 	}
 	
 	/*
