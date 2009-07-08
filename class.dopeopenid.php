@@ -142,7 +142,7 @@ class Dope_OpenID
 	
 	public function isError()
 	{
-		if (count($this->error) > 0) {
+		if ( ! empty($this->error)) {
 			return TRUE;
 		}
 		else{
@@ -183,7 +183,7 @@ class Dope_OpenID
 		}
 		
 		// If no servers were discovered by Yadis or by parsing HTML, error out
-		if (count($servers) == 0){
+		if (empty($servers)){
 			$this->errorStore('OPENID_NOSERVERSFOUND');
 			return FALSE;
 		}
@@ -287,7 +287,7 @@ class Dope_OpenID
 
 		// Is this an XRI string?
 		// Check for "xri://" prefix or XRI Global Constant Symbols
-		if (stripos($identity, 'xri://') || in_array($identity[0], $xriIdentifiers)){	
+		if (stripos($identity, 'xri://') OR in_array($identity[0], $xriIdentifiers)){	
 			// Attempts to convert an XRI into a URI by removing the "xri://" prefix and
 			// appending the remainder to the URI of an XRI proxy such as "http://xri.net"
 			if (stripos($identity, 'xri://') == 0) {
@@ -310,7 +310,7 @@ class Dope_OpenID
 		
 		// Google is not publishing its XRDS document yet, so the OpenID
 		// endpoint must be set manually for now.
-		if (stripos($identity, 'gmail') || stripos($identity, 'google')) {
+		if (stripos($identity, 'gmail') OR stripos($identity, 'google')) {
 			$identity = "https://www.google.com/accounts/o8/id";
 		}
 		$this->openid_url_identity = $identity;
@@ -454,20 +454,34 @@ class Dope_OpenID
     	
     	$params['openid.mode'] = 'checkid_setup';
     	
+    	/**
+    	* Handle user attribute requests.
+    	*/
+		$info_request = FALSE;
+    	
     	// User Info Request: Setup
-    	if (isset($this->fields['required']) || isset($this->fields['optional'])) {
+    	if (isset($this->fields['required']) OR isset($this->fields['optional'])) {    		
     		$params['openid.ns.ax']   = "http://openid.net/srv/ax/1.0";
     		$params['openid.ax.mode'] = "fetch_request";
     		$params['openid.ns.sreg'] = "http://openid.net/extensions/sreg/1.1";
+
+    		$info_request = TRUE;
     	}
     	
     	// MyOpenID.com is using an outdated AX schema URI
-    	if (stristr($this->URLs['openid_server'], 'myopenid.com')) {
+    	if (stristr($this->URLs['openid_server'], 'myopenid.com') && $info_request == TRUE) {
     		$this->arr_ax_types = preg_replace("/axschema.org/","schema.openid.net",$this->arr_ax_types);
     	}
     	
+    	// If we're requesting user info from Google, it MUST be specified as "required"
+    	// Will not work otherwise.
+    	if (stristr($this->URLs['openid_server'], 'google.com') && $info_request == TRUE) {
+    		$this->fields['required'] = array_unique(array_merge($this->fields['optional'], $this->fields['required']));
+    		$this->fields['optional'] = array();
+    	}
+    	
     	// User Info Request: Required data
-    	if (isset($this->fields['required']) && (count($this->fields['required']) > 0)) {
+    	if (isset($this->fields['required']) && ( ! empty($this->fields['required']))) {
     		
     		// Set required params for Attribute Exchange (AX) protocol
     		$params['openid.ax.required']   = implode(',',$this->fields['required']);
@@ -483,7 +497,7 @@ class Dope_OpenID
     	}
     	
     	// User Info Request: Optional data
-    	if (isset($this->fields['optional']) && (count($this->fields['optional']) > 0)) {
+    	if (isset($this->fields['optional']) && ( ! empty($this->fields['optional']))) {
     		// Set optional params for Attribute Exchange (AX) protocol
     		$params['openid.ax.if_available'] = implode(',',$this->fields['optional']);
     		
@@ -497,7 +511,7 @@ class Dope_OpenID
     	}
     	
     	// Add PAPE params if exists
-    	if (isset($this->fields['pape_policies']) && (count($this->fields['pape_policies']) > 0)) {
+    	if (isset($this->fields['pape_policies']) && ( ! empty($this->fields['pape_policies']))) {
     		$params['openid.ns.pape'] = "http://specs.openid.net/extensions/pape/1.0";
     		$params['openid.pape.preferred_auth_policies'] = urlencode(implode(' ',$this->fields['pape_policies']));
     		
